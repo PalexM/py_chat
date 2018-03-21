@@ -9,7 +9,7 @@ import threading
 import sys
 
 class Client:
-	#AF_INET = IPv4 and IPv6 
+	#AF_INET = IPv4 and IPv6
 	#SOCK_STREAM = TCP connections for UPD connections use SOCK_DGRAM
 	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	def __init__(self):
@@ -29,21 +29,39 @@ class Client:
 		while True:
 			self.sock.send(bytes(input(""), 'utf-8'))
 
-client = Client()
-client.sendMsg()
+
 
 class Connection:
+
+
+	connections = []
+	def addClient(self,client_connection, client_address):
+		print('test')
+		self.connections.append(client_connection)
+		clientThread = threading.Thread(self.handler(client_connection, client_address))
+		clientThread.deamon = True
+		clientThread.start()
+		print(srt(client_address[0]) + ":" + str(client_address[1]), "connected")
+
 	def handler(self, client_connection, client_address):
-		print('in connection handler')
+
 		while True:
 			data = client_connection.recv(1024)
+			print(data)
+			print(self.connections)
 			for connection in self.connections:
 				if client_connection != connection:
 					connection.send(data)
 					print(data)
-			if not data:						
+			if not data:
 				print(srt(client_address[0]) + ":" + str(client_address[1]), "disconected")
 				self.connections.remove(client_connection)
 				client_connection.close()
 				break
 
+
+
+
+if __name__ == "__main__":
+	client = Client()
+	client.sendMsg()

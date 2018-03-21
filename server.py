@@ -6,27 +6,26 @@
 
 import socket
 import threading
-from connections import Connection
+from client import Client, Connection
 class Server:
-	#AF_INET = IPv4 and IPv6 
+	#AF_INET = IPv4 and IPv6
 	#SOCK_STREAM = TCP connections for UPD connections use SOCK_DGRAM
 	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-	connections = []
 	def __init__(self):
 		self.sock.bind(('localhost', 10000))
 		self.sock.listen(1)
 
 
 	def run(self):
-
+		print("Server up and Running")
 		while True:
-			client_connection, client_address = self.sock.accept()
-			handle_connection = Connection()
-			clientThread = threading.Thread(handle_connection.handler(client_connection, client_address))
-			clientThread.deamon = True
-			clientThread.start()
-			handle_connection.setConnection(client_connection)
-			print(str(client_address[0]) + ":" + str(client_address[1]), "connected")
+			c, a = self.sock.accept();
+			print(c, a )
+			print('run')
+			connection = Connection()
+			connection.addClient(c, a)
+
+
 
 server = Server();
 server.run()
